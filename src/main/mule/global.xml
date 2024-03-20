@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	<http:listener-config name="uhub-sapi-httpListenerConfig" basePath="covid">
+        <http:listener-connection host="0.0.0.0" port="${secure::http.port}" />
+    </http:listener-config>
+    <apikit:config name="uhub-sapi-config" api="uhub-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />  
+  <db:config name="Uhub_Database_Config" doc:name="Database Config" doc:id="92eb935d-b6a1-4f0f-abb4-8bb05e075246" > 
+  <db:oracle-connection host="${secure::database.uhub.host}" user="${secure::database.uhub.user}" password="${secure::database.uhub.password}" instance="${secure::database.uhub.instance}" port="${secure::database.uhub.port}"/> 
+ </db:config>
+ <!-- <api-gateway:autodiscovery apiId="${api.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="b70220a6-92a2-4c1c-908c-b5b9a4c021a9" flowRef="uhub-sapi-main" /> -->
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="94c171e0-b1aa-49cf-9a86-4477cf4fa195" file="${env}.yaml" key="${enc.key}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="6236edda-165e-4ef4-b67f-53391cdc953e" file="${env}.yaml" />
+	<global-property doc:name="Global Property" doc:id="c749ce65-7817-4bb7-ac56-972180a850db" name="enc.key" value="mulesoft" />
+	
+</mule>
